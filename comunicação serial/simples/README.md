@@ -1,5 +1,5 @@
 ## Este é um exemplo de comunicação serial de 1 Byte, ou seja, 8 bits.
-*Exemplo fazendo uso de um microcontrolador da família STM, com nomenclatura STM32F407VET6. Neste exemplo, foi feito o uso de dois microcontroladores mencionados anteriormente, de forma que ao apertar o push button de um microcontrolador, deveria acender um LED presente no outro. Caso a comunicação não seja concluída com sucesso, deve-se acender o LED da própria placa onde o push button foi pressionado.
+* Exemplo fazendo uso de um microcontrolador da família STM, com nomenclatura STM32F407VET6. Neste exemplo, foi feito o uso de dois microcontroladores mencionados anteriormente, de forma que ao apertar o push button de um microcontrolador, deveria acender um LED presente no outro. Caso a comunicação não seja concluída com sucesso, deve-se acender o LED da própria placa onde o push button foi pressionado.
 * Neste exemplo, fez-se uso de um pacote de dados nesta configuração:
   * 1 bit de início (start bit).
   * 8 bits de informações.
