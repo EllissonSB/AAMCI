@@ -1,4 +1,5 @@
 # Biblioteca para DHT22
+![image](https://github.com/EllissonSB/AAMCI/assets/57837838/b0b9df77-36cb-4275-97bb-f0028adac35e)
 
 Esta é uma biblioteca em linguagem C para o sensor de temperatura e umidade DHT22, projetada para ser utilizada em plataformas STM32. Ela oferece uma interface simples para ler os dados de temperatura e umidade do sensor, facilitando a integração em projetos STM32.
 
