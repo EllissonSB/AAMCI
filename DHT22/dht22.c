@@ -43,10 +43,13 @@ int DHT22_ReadData(DHT22_HandleTypeDef* hdht22, float* temperature, float* humid
     hdht22->GPIO_Port->ODR &=~(1 << hdht22->GPIO_Pin);	//linha de dados em nível alto
     Delay_ms(1);
     hdht22->GPIO_Port->ODR |=(1 << hdht22->GPIO_Pin);
-    Delay_us(1);
-    while(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin);
-	while(!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin));
-	while(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin);
+    Delay_us(40);
+    if (!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin)) //O pino está em nível logico down.
+	{
+        Delay_us (80);
+        if(!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin)) return 0;  // Não ocorreu comunicação retorna 0
+    }
+    while (hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin);   // wait for the pin to go low
     uint16_t dados[2],data;
     uint8_t for_iterator_temp, for_iterator_bits;
     for (for_iterator_temp=0;for_iterator_temp++;for_iterator_temp<2){
