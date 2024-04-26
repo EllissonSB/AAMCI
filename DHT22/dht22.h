@@ -1,9 +1,14 @@
-'// dht22.h
+/*
+ * dht22.h
+ *
+ *      Author: ellisson
+ */
+
 
 #ifndef DHT22_H
 #define DHT22_H
 
-#include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
 
 typedef struct {
     GPIO_TypeDef* GPIO_Port;
