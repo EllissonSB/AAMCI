@@ -4,7 +4,6 @@
  *      Author: ellisson
  */
 
-
 #include "dht22.h"
 
 void configure_timer_2(void){ //função para o timer ter incrementos a cada 1uS
@@ -14,19 +13,37 @@ void configure_timer_2(void){ //função para o timer ter incrementos a cada 1uS
 	TIM2->EGR = TIM_EGR_UG;				//update event para escrever o valor do prescaler
 	TIM2->CR1 |= TIM_CR1_CEN;
 }
-
+void enable_gpio_clock(GPIO_TypeDef *GPIOx){
+    if (GPIOx == GPIOA) {
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+    } else if (GPIOx == GPIOB) {
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+    } else if (GPIOx == GPIOC) {
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+    } 
+	 else if (GPIOx == GPIOD) {
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+    }
+	 else if (GPIOx == GPIOE) {
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+    }
+}
+void gpio_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin){
+	enable_gpio_clock(GPIOx);
+	GPIO_InitTypeDef GPIO_InitStruct;
+	// Configuração dos pinos GPIO como saída com resistor de pull-up ativado
+	GPIO_InitStruct.Pin = GPIO_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // Modo de saída push-pull
+	GPIO_InitStruct.Pull = GPIO_PULLUP; // Resistor de pull-up ativado
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // Alta Velocidade velocidade (opcional)
+	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}
 void DHT22_Init(DHT22_HandleTypeDef* hdht22, GPIO_TypeDef* GPIO_Port, uint16_t GPIO_Pin){
 
 	hdht22->GPIO_Port=GPIO_Port;
-    hdht22->GPIO_Pin=GPIO_Pin;
-    configure_timer_2();
-    RCC->AHB1ENR |= (1 << ((uint32_t)GPIO_Port - (GPIOA_BASE)) / ((GPIOB_BASE) - (GPIOA_BASE)));// Habilita o clock do GPIO
-    GPIO_Port->OTYPER |= GPIO_Pin;  //pino como dreno aberto.
-    GPIO_Port->PUPDR &= ~(0b11 << 2*GPIO_Pin);	//desabilita qualquer resistor
-    GPIO_Port->PUPDR |= (0b01 << 2*GPIO_Pin);	//configura o resistor de pull-up
-    GPIO_Port->MODER &= ~(0b11 << 2*GPIO_Pin);	//reseta os 2 bits do modo de operação
-	GPIO_Port->MODER |= (0b01 << 2*GPIO_Pin);	//configura o modo de saída
-
+	hdht22->GPIO_Pin=GPIO_Pin;
+	gpio_init(GPIO_Port,GPIO_Pin);
+	configure_timer_2();
 }
 //Criação de atraso em us
 void Delay_us(uint32_t delay){
