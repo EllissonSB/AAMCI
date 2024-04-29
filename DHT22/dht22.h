@@ -21,5 +21,5 @@ void enable_gpio_clock(GPIO_TypeDef* GPIOx);
 void configure_timer_2(void);
 void Delay_us(uint32_t delay);
 void Delay_ms(uint32_t delay);
-
+void gpoio_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 #endif /* DHT22_H */
