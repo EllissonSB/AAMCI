@@ -57,35 +57,39 @@ void Delay_ms(uint32_t delay){
 	while(TIM2->CNT < max);		//aguarda o tempo passar
 }
 int DHT22_ReadData(DHT22_HandleTypeDef* hdht22, float* temperature, float* humidity){
-    hdht22->GPIO_Port->ODR &=~(1 << hdht22->GPIO_Pin);	//linha de dados em nível alto
-    Delay_ms(1);
-    hdht22->GPIO_Port->ODR |=(1 << hdht22->GPIO_Pin);
-    Delay_us(40);
-    if (!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin)) //O pino está em nível logico down.
+	hdht22->GPIO_Port->ODR &=~(1 << hdht22->GPIO_Pin);	//linha de dados em nível alto
+	Delay_ms(1);
+	hdht22->GPIO_Port->ODR |=(1 << hdht22->GPIO_Pin);
+	Delay_us(40);
+	if (HAL_GPIO_ReadPin(hdht22->GPIO_Port, hdht22->GPIO_Pin)==GPIO_PIN_RESET)//O pino está em nível lógico down.
 	{
-        Delay_us (80);
-        if(!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin)) return 0;  // Não ocorreu comunicação retorna 0
-    }
-    while (hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin);   // wait for the pin to go low
-    uint16_t dados[2],data;
-    uint8_t for_iterator_temp, for_iterator_bits;
-    for (for_iterator_temp=0;for_iterator_temp++;for_iterator_temp<2){
-        data=0;
-        for (for_iterator_bits=0;for_iterator_bits++;for_iterator_bits<16){
-            while(!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin));
-			Delay_us(40);
-			if(!(hdht22->GPIO_Port->IDR & hdht22->GPIO_Pin))
-			{
-				data <<= 1;
-			}
-			else
-			{
-				data |= 1;
-			}
-        }
-        dados[for_iterator_temp]=data;
-    }
-    temperature=(dados[0]/10)+1;
-    humidity=(dados[1]/10)+1;
-    return 1;
-}
+	Delay_us (80);
+	if(HAL_GPIO_ReadPin(hdht22->GPIO_Port, hdht22->GPIO_Pin)==GPIO_PIN_RESET) return 0;  // Não ocorreu comunicação retorna 0
+	}
+	else
+	{
+		return 0;  // Não ocorreu comunicação retorna 0
+	}
+	while (HAL_GPIO_ReadPin(hdht22->GPIO_Port, hdht22->GPIO_Pin)==GPIO_PIN_SET);   // aguarda o pino ir para nível lógico down
+	uint16_t dados[2],data;
+	uint8_t for_iterator_temp, for_iterator_bits;
+	for (for_iterator_temp=0;for_iterator_temp<2;for_iterator_temp++){
+	data=0;
+	for (for_iterator_bits=0;for_iterator_bits<16;for_iterator_bits++){
+	    while(HAL_GPIO_ReadPin(hdht22->GPIO_Port, hdht22->GPIO_Pin)==GPIO_PIN_RESET);
+		Delay_us(40);
+		if(HAL_GPIO_ReadPin(hdht22->GPIO_Port, hdht22->GPIO_Pin)==GPIO_PIN_RESET)
+		{
+		data <<= 1;
+		}
+		else
+		{
+		data |= 1;
+		}
+	}
+	dados[for_iterator_temp]=data;
+	}
+	*temperature=(dados[0]/10)+1;
+	*humidity=(dados[1]/10)+1;
+	return 1; // Leitura, com sucesso retorna 1.
+	}
