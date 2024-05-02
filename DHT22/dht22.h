@@ -7,6 +7,7 @@
 
 #ifndef DHT22_H
 #define DHT22_H
+#define DHT22_OK 1
 
 #include "stm32f4xx.h"
 
